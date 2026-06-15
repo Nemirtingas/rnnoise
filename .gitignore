@@ -1,0 +1,6 @@
+OUT
+models
+src/rnnoise_data.*
+src/rnnoise_data_little.*
+rnnoise_data-*
+.extracted*
