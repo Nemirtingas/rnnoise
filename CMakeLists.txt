@@ -18,6 +18,12 @@ option(RNNOISE_DOC "Build docs" OFF)
 option(RNNOISE_LITTLE "Use little data" ON)
 option(RNNOISE_DYNAMIC_RUNTIME "Link against dynamic runtime (Windows)" ON)
 
+set(IS_X86 FALSE)
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|i[3-6]86)$")
+    set(IS_X86 TRUE)
+endif()
+
 # =========================================================
 # Library target
 # =========================================================
@@ -51,7 +57,7 @@ target_sources(rnnoise PRIVATE ${RNNOISE_SOURCES})
 # =========================================================
 # X86 RTCD sources + SIMD flags
 # =========================================================
-if(RNNOISE_X86_RTCD)
+if(RNNOISE_X86_RTCD AND IS_X86)
     target_sources(rnnoise PRIVATE
         src/x86/x86_dnn_map.c
         src/x86/x86cpu.c
@@ -106,8 +112,8 @@ target_compile_definitions(rnnoise PRIVATE
     $<$<NOT:$<BOOL:${RNNOISE_DNN_DEBUG_FLOAT}>>:DISABLE_DEBUG_FLOAT=1>
 
     # RTCD
-    $<$<BOOL:${RNNOISE_X86_RTCD}>:RNN_ENABLE_X86_RTCD=1>
-    $<$<BOOL:${RNNOISE_X86_RTCD}>:CPU_INFO_BY_ASM=1>
+    $<$<AND:${IS_X86},$<BOOL:${RNNOISE_X86_RTCD}>>:RNN_ENABLE_X86_RTCD=1>
+    $<$<AND:${IS_X86},$<BOOL:${RNNOISE_X86_RTCD}>>:CPU_INFO_BY_ASM=1>
 
     # Windows compatibility
     $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0501>
