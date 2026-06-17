@@ -158,15 +158,26 @@ if(RNNOISE_EXAMPLES)
     target_link_libraries(rnnoise_demo PRIVATE rnnoise)
 endif()
 
+add_library(rnnoise::rnnoise ALIAS rnnoise)
+set_target_properties(rnnoise PROPERTIES EXPORT_NAME rnnoise)
+
 # =========================================================
 # Installation
 # =========================================================
-install(TARGETS rnnoise
+install(TARGETS rnnoise EXPORT rnnoiseTargets
+    RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
 )
 
 install(FILES include/rnnoise.h
     DESTINATION include
+)
+
+# Export targets
+install(
+  EXPORT rnnoiseTargets
+  FILE rnnoiseConfig.cmake
+  NAMESPACE rnnoise::
+  DESTINATION lib/cmake/rnnoise
 )
